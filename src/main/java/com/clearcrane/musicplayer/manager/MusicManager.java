@@ -122,6 +122,11 @@ public class MusicManager implements IMusicManager {
     }
 
     @Override
+    public void setPlayMode(int mode) {
+        // TODO: 2018/5/10
+    }
+
+    @Override
     public void playNext() {
         mCurrentPosition = mCurrentPosition >= mPlayList.size() - 1 ? 0 : mCurrentPosition + 1;
         Music next = mPlayList.get(mCurrentPosition);

@@ -45,7 +45,9 @@
             android:layout_width="@dimen/ImageButtonSize"
             android:layout_height="@dimen/ImageButtonSize"
             android:layout_marginRight="@dimen/d50"
-            android:background="@drawable/ic_play" />
+            android:background="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_play" />
 
         <Button
             android:id="@+id/btn"

@@ -29,12 +29,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.clearcrane.musicplayer.utils.Preconditions.checkIndexInBounds;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+    private static final String[] Modes = {"顺序播放", "随机播放", "单曲循环"};
     private Button mBtnInit;
     private ImageButton mBtnNext;
     private ImageButton mBtnPre;
     private ImageButton mBtnPlay;
+    private Button mBtnMode;
 
     private TextView mTvCurrentPlay;
     private TextView mTvProgress;
@@ -109,14 +113,16 @@ public class MainActivity extends AppCompatActivity {
         mBtnPre = findViewById(R.id.btnPlayPrevious);
         mBtnPre.setOnClickListener(v -> mManager.playPrevious());
         mBtnPlay = findViewById(R.id.btnPlay);
-        mBtnPlay.setOnClickListener(v -> mManager.playOrPause());
+        mBtnPlay.setOnClickListener(v -> changePlayState());
+        mBtnMode = findViewById(R.id.btnPlayMode);
+        mBtnMode.setOnClickListener(v -> changePlayMode());
 
         mTvCurrentPlay = findViewById(R.id.tvCurrentPlay);
         mTvProgress = findViewById(R.id.tvProgress);
         mTvVolume = findViewById(R.id.tvVolume);
         mSeekBar = findViewById(R.id.pbMusic);
         mSeekBar.setOnSeekBarChangeListener(mSeekBarListener);
-        mSeekBar.setOnClickListener(v -> mManager.playOrPause());
+        mSeekBar.setOnClickListener(v -> changePlayState());
         mSbVolume = findViewById(R.id.sbVolume);
         mSbVolume.setOnSeekBarChangeListener(mVolumeSeekBarListener);
         mVolumeLayout = findViewById(R.id.volumeLayout);
@@ -145,6 +151,34 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, MusicService.class);
             startService(intent);
         }
+    }
+
+    private void changePlayState() {
+        if (mManager.isPlaying()) {
+            Log.d(TAG, "changePlayState: is playing...");
+            mBtnPlay.setImageResource(R.drawable.ic_pause);
+        } else {
+            Log.d(TAG, "changePlayState: is not playing...");
+            mBtnPlay.setImageResource(R.drawable.ic_play);
+        }
+        mManager.playOrPause();
+    }
+
+    private void changePlayMode() {
+        String currentMode = mBtnMode.getText().toString();
+        int nextIndex = 0;
+        for (int i = 0; i < Modes.length; i++) {
+            if (currentMode.equals(Modes[i])) {
+                nextIndex = i == Modes.length - 1 ? 0 : i + 1;
+                break;
+            }
+        }
+        changePlayMode(nextIndex);
+    }
+
+    private void changePlayMode(int index) {
+        checkIndexInBounds(Modes, index);
+        mBtnMode.setText(Modes[index]);
     }
 
     private void initMusicManager(boolean first) {

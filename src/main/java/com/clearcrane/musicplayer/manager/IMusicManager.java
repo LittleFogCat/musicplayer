@@ -1,5 +1,7 @@
 package com.clearcrane.musicplayer.manager;
 
+import android.support.annotation.IntDef;
+
 import java.util.List;
 
 /**
@@ -95,4 +97,19 @@ public interface IMusicManager {
     int getVolume();
 
     void setVolume(int volume);
+
+    /**
+     * 设置播放模式
+     *
+     * @param mode 模式
+     */
+    void setPlayMode(@PlayMode int mode);
+
+    @IntDef({ORDERED, SHUFFLE, SINGLE})
+    public @interface PlayMode {
+    }
+
+    int ORDERED = 0;
+    int SHUFFLE = 1;
+    int SINGLE = 2;
 }
