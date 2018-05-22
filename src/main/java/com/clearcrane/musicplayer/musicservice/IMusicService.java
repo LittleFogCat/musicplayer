@@ -1,7 +1,6 @@
-package com.clearcrane.musicplayer.service;
+package com.clearcrane.musicplayer.musicservice;
 
 import android.media.MediaPlayer;
-import android.support.annotation.IntDef;
 
 /**
  * Created by jjy on 2018/5/8.

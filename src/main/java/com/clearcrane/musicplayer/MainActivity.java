@@ -20,9 +20,10 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.clearcrane.musicplayer.manager.IMusicManager;
-import com.clearcrane.musicplayer.manager.MusicManager;
-import com.clearcrane.musicplayer.service.MusicService;
+import com.clearcrane.musicplayer.controller.Controller;
+import com.clearcrane.musicplayer.musicmanager.IMusicManager;
+import com.clearcrane.musicplayer.musicmanager.MusicManager;
+import com.clearcrane.musicplayer.musicservice.MusicService;
 import com.clearcrane.musicplayer.view.WrapperView;
 
 import java.io.File;
@@ -104,6 +105,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!initController()) {
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_main);
 
         mBtnInit = findViewById(R.id.btn);
@@ -151,6 +156,13 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, MusicService.class);
             startService(intent);
         }
+    }
+
+    private boolean initController() {
+        Controller controller = Controller.getInstance();
+        controller.startWork();
+
+        return controller.hasUI();
     }
 
     private void changePlayState() {

@@ -1,4 +1,4 @@
-package com.clearcrane.musicplayer.service;
+package com.clearcrane.musicplayer.musicservice;
 
 import android.app.Service;
 import android.content.Intent;
@@ -7,7 +7,7 @@ import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.clearcrane.musicplayer.manager.MusicManager;
+import com.clearcrane.musicplayer.musicmanager.MusicManager;
 
 public class MusicService extends Service implements IMusicService {
     private static final String TAG = "MusicService";
@@ -18,7 +18,7 @@ public class MusicService extends Service implements IMusicService {
     @Override
     public void onCreate() {
         super.onCreate();
-        MusicManager.init(this);
+        MusicManager.getInstance().setService(this);
         mMediaPlayer = new MediaPlayer();
 
         mMediaPlayer.setOnCompletionListener(mp -> {

@@ -1,10 +1,9 @@
-package com.clearcrane.musicplayer.manager;
+package com.clearcrane.musicplayer.musicmanager;
 
 import android.os.Handler;
-import android.text.TextUtils;
 import android.util.Log;
 
-import com.clearcrane.musicplayer.service.IMusicService;
+import com.clearcrane.musicplayer.musicservice.IMusicService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,23 +21,34 @@ public class MusicManager implements IMusicManager {
     private List<Music> mPlayList = new ArrayList<>();
     private int mCurrentPosition;
     private OnProgressListener mProgressListener;
+    private OnServiceStartedListener mOnServiceStartedListener;
 
-    private MusicManager(IMusicService service) {
-        mService = service;
-        mService.setOnCompleteListener(mp -> playNext());
-    }
-
-    public static void init(IMusicService service) {
-        if (sManager == null) {
-            sManager = new MusicManager(service);
-        }
+    private MusicManager() {
     }
 
     public static IMusicManager getInstance() {
         if (sManager == null) {
-            throw new NullPointerException();
+            sManager = new MusicManager();
         }
         return sManager;
+    }
+
+    @Override
+    public void setOnServiceStartListener(OnServiceStartedListener listener) {
+        mOnServiceStartedListener = listener;
+    }
+
+    @Override
+    public void setService(IMusicService service) {
+        if (mService != null) {
+            Log.w(TAG, "setService: service is already set", new IllegalStateException("service is already set"));
+            return;
+        }
+        mService = service;
+        mService.setOnCompleteListener(mp -> playNext());
+        if (mOnServiceStartedListener != null) {
+            mOnServiceStartedListener.onServiceStarted(service);
+        }
     }
 
     @Override
@@ -170,50 +180,5 @@ public class MusicManager implements IMusicManager {
         }
     };
 
-    public static class Music {
-        public String name;
-        public String url;
-        public String artist;
-        public String author;
-        public String album;
-        public String publishYear;
-        public byte[] albumCover;
 
-        protected Music() {
-        }
-
-        public Music(String name, String url, String artist) {
-            this.name = checkNotNull(name);
-            this.url = checkNotNull(url);
-            this.artist = checkNotNull(artist);
-        }
-
-        public Music(String name, String url, String artist, String author, String album, String publishYear, byte[] albumCover) {
-            this.name = checkNotNull(name);
-            this.url = checkNotNull(url);
-            this.artist = checkNotNull(artist);
-            this.author = checkNotNull(author);
-            this.album = checkNotNull(album);
-            this.publishYear = checkNotNull(publishYear);
-            this.albumCover = albumCover;
-        }
-
-        private static String checkNotNull(String obj) {
-            return TextUtils.isEmpty(obj) ? "UNKNOWN" : obj;
-        }
-
-        @SuppressWarnings("ImplicitArrayToString")
-        @Override
-        public String toString() {
-            return "Music{" +
-                    "name='" + name + '\'' +
-                    ", url='" + url + '\'' +
-                    ", artist='" + artist + '\'' +
-                    ", author='" + author + '\'' +
-                    ", album='" + album + '\'' +
-                    ", publishYear='" + publishYear + '\'' +
-                    ", albumCover=" + albumCover +
-                    '}';
-        }
-    }
 }
