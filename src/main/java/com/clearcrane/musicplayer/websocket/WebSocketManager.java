@@ -12,7 +12,7 @@ import static com.clearcrane.musicplayer.utils.Preconditions.checkNotNull;
 /**
  * Created by jjy on 2018/5/22.
  * <p>
- * WebSocket
+ * 管理WebSocket的连接。
  */
 
 public class WebSocketManager implements IWebSocketManager {

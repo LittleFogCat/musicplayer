@@ -11,7 +11,8 @@ import java.util.List;
 /**
  * Created by jjy on 2018/5/8.
  * <p>
- * MusicManager的作用是管理音乐播放的状态，比如播放列表等，并且和外界相连
+ * MusicManager的作用是管理音乐播放的状态，比如播放列表等。
+ * 管理音乐播放。
  */
 
 public class MusicManager implements IMusicManager {
@@ -19,9 +20,8 @@ public class MusicManager implements IMusicManager {
     private static MusicManager sManager;
     private IMusicService mService;
     private List<Music> mPlayList = new ArrayList<>();
-    private int mCurrentPosition;
+    private int mCurrentMusicIndex;
     private OnProgressListener mProgressListener;
-    private OnServiceStartedListener mOnServiceStartedListener;
 
     private MusicManager() {
     }
@@ -34,11 +34,6 @@ public class MusicManager implements IMusicManager {
     }
 
     @Override
-    public void setOnServiceStartListener(OnServiceStartedListener listener) {
-        mOnServiceStartedListener = listener;
-    }
-
-    @Override
     public void setService(IMusicService service) {
         if (mService != null) {
             Log.w(TAG, "setService: service is already set", new IllegalStateException("service is already set"));
@@ -46,9 +41,6 @@ public class MusicManager implements IMusicManager {
         }
         mService = service;
         mService.setOnCompleteListener(mp -> playNext());
-        if (mOnServiceStartedListener != null) {
-            mOnServiceStartedListener.onServiceStarted(service);
-        }
     }
 
     @Override
@@ -73,7 +65,7 @@ public class MusicManager implements IMusicManager {
 
     @Override
     public Music getCurrentPlaying() {
-        return mPlayList.get(mCurrentPosition);
+        return mPlayList.get(mCurrentMusicIndex);
     }
 
     @Override
@@ -138,8 +130,8 @@ public class MusicManager implements IMusicManager {
 
     @Override
     public void playNext() {
-        mCurrentPosition = mCurrentPosition >= mPlayList.size() - 1 ? 0 : mCurrentPosition + 1;
-        Music next = mPlayList.get(mCurrentPosition);
+        mCurrentMusicIndex = mCurrentMusicIndex >= mPlayList.size() - 1 ? 0 : mCurrentMusicIndex + 1;
+        Music next = mPlayList.get(mCurrentMusicIndex);
         Log.d(TAG, "playNext: " + next);
         mService.play(next.url);
     }
@@ -147,8 +139,8 @@ public class MusicManager implements IMusicManager {
     @Override
     public void playPrevious() {
         Log.d(TAG, "playPrevious: ");
-        mCurrentPosition = mCurrentPosition <= 0 ? mPlayList.size() - 1 : mCurrentPosition - 1;
-        mService.play(mPlayList.get(mCurrentPosition).url);
+        mCurrentMusicIndex = mCurrentMusicIndex <= 0 ? mPlayList.size() - 1 : mCurrentMusicIndex - 1;
+        mService.play(mPlayList.get(mCurrentMusicIndex).url);
     }
 
     @Override
@@ -158,6 +150,21 @@ public class MusicManager implements IMusicManager {
         } else {
             mService.resume();
         }
+    }
+
+    @Override
+    public void start() {
+        mService.resume();
+    }
+
+    @Override
+    public void start(String url) {
+        mService.play(url);
+    }
+
+    @Override
+    public void pause() {
+        mService.pause();
     }
 
     @Override
@@ -175,8 +182,13 @@ public class MusicManager implements IMusicManager {
     private Runnable mProgressTask = new Runnable() {
         @Override
         public void run() {
-            mProgressListener.onProgress(mPlayList.get(mCurrentPosition), mService.getPosition(), mService.getDuration());
-            mHandler.postDelayed(this, 500);
+            if (mPlayList.isEmpty()) {
+                mProgressListener.onProgress(null, 0, 0);
+            } else {
+                Music music = mPlayList.get(mCurrentMusicIndex);
+                mProgressListener.onProgress(music, mService.getPosition(), mService.getDuration());
+            }
+            mHandler.postDelayed(this, 1000);
         }
     };
 

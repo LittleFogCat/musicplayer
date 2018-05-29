@@ -1,6 +1,5 @@
 package com.clearcrane.musicplayer.musicmanager;
 
-import android.support.annotation.IntDef;
 import android.text.TextUtils;
 
 import com.clearcrane.musicplayer.musicservice.IMusicService;
@@ -24,14 +23,35 @@ public interface IMusicManager {
     List<Music> getPlayList();
 
     /**
-     * 保存当前播放的音乐
+     * 设置当前播放的音乐
      *
      * @param position 当前播放的音乐的序号
      */
     void setCurrentPlaying(int position);
 
+    /**
+     * 开始播放
+     */
+    void start();
+
+    /**
+     * 开始播放指定曲目
+     */
+    void start(String url);
+
+    /**
+     * 暂停播放
+     */
+    void pause();
+
+    /**
+     * 播放/暂停
+     */
     void playOrPause();
 
+    /**
+     * @return 返回是否正在播放
+     */
     boolean isPlaying();
 
     /**
@@ -101,14 +121,14 @@ public interface IMusicManager {
 
     /**
      * 设置播放模式
+     * <p>
+     * int ORDERED = 0;
+     * int SHUFFLE = 1;
+     * int SINGLE = 2;
      *
      * @param mode 模式
      */
-    void setPlayMode(@PlayMode int mode);
-
-    @IntDef({ORDERED, SHUFFLE, SINGLE})
-    @interface PlayMode {
-    }
+    void setPlayMode(int mode);
 
     int ORDERED = 0;
     int SHUFFLE = 1;
@@ -123,7 +143,7 @@ public interface IMusicManager {
         public String publishYear;
         public byte[] albumCover;
 
-        protected Music() {
+        public Music() {
         }
 
         public Music(String name, String url, String artist) {
@@ -159,11 +179,5 @@ public interface IMusicManager {
                     ", albumCover=" + albumCover +
                     '}';
         }
-    }
-
-    void setOnServiceStartListener(OnServiceStartedListener listener);
-
-    interface OnServiceStartedListener {
-        void onServiceStarted(IMusicService service);
     }
 }
