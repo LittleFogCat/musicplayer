@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
     private WrapperView mWrapper;
 
     private IMusicManager mManager;
-    private Handler mHandler = new Handler();
 
     private MusicManager.Music mCurrentMusic;
 
