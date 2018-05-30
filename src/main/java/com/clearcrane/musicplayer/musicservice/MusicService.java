@@ -1,4 +1,4 @@
-package com.clearcrane.musicplayer.service;
+package com.clearcrane.musicplayer.musicservice;
 
 import android.app.Service;
 import android.content.Intent;
@@ -7,18 +7,21 @@ import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.clearcrane.musicplayer.manager.MusicManager;
+import com.clearcrane.musicplayer.controller.Controller;
+import com.clearcrane.musicplayer.musicmanager.MusicManager;
 
 public class MusicService extends Service implements IMusicService {
     private static final String TAG = "MusicService";
+    public static final String ACTION_MUSIC_SERVICE = "com.clearcrane.musicplayer.intent.action.notify_service_state_changed";
     private MediaPlayer mMediaPlayer;
 
     private MediaPlayer.OnCompletionListener mOnCompletionListener;
 
     @Override
     public void onCreate() {
+        Log.d(TAG, "onCreate: ");
         super.onCreate();
-        MusicManager.init(this);
+        MusicManager.getInstance().setService(this);
         mMediaPlayer = new MediaPlayer();
 
         mMediaPlayer.setOnCompletionListener(mp -> {
@@ -26,17 +29,31 @@ public class MusicService extends Service implements IMusicService {
                 mOnCompletionListener.onCompletion(mp);
             }
         });
-        sendBroadcast(new Intent("com.clearcrane.musicplayer.intent.action.serviceoncreate"));
+        Controller.getInstance().onMusicServiceStarted();
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy: ");
+        super.onDestroy();
+        Controller.getInstance().onMusicServiceStopped();
     }
 
     @Override
     public void play(String url) {
         try {
             Log.d(TAG, "play: " + url);
-            mMediaPlayer.reset();
-            mMediaPlayer.setDataSource(url);
-            mMediaPlayer.prepare();
-            mMediaPlayer.start();
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.reset();
+                mMediaPlayer.setDataSource(url);
+                mMediaPlayer.prepare();
+                mMediaPlayer.start();
+            } else {
+                mMediaPlayer.reset();
+                mMediaPlayer.setDataSource(url);
+                mMediaPlayer.prepare();
+                mMediaPlayer.start();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,5 +1,7 @@
 package com.clearcrane.musicplayer.utils;
 
+import java.util.List;
+
 /**
  * Created by jjy on 2018/5/10.
  */
@@ -17,5 +19,9 @@ public class Preconditions {
             throw new IndexOutOfBoundsException();
         }
         return array[index];
+    }
+
+    public <T> boolean isEmpty(List<T> list) {
+        return list == null || list.isEmpty();
     }
 }

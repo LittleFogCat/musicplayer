@@ -17,6 +17,19 @@ public class WrapperView extends View implements ViewTreeObserver.OnGlobalFocusC
     private static final String TAG = "WrapperView";
 
     private int[] mLoc = new int[2];
+    private long mLastChange;
+    private Handler mHandler = new Handler();
+    private Runnable dismiss = new Runnable() {
+        @Override
+        public void run() {
+            Log.d(TAG, "run: " + System.currentTimeMillis() + "," + mLastChange);
+            if (System.currentTimeMillis() - mLastChange >= 2500) {
+                setVisibility(INVISIBLE);
+            } else {
+                mHandler.postDelayed(this, System.currentTimeMillis() - mLastChange + 3000);
+            }
+        }
+    };
 
     public WrapperView(Context context) {
         super(context);

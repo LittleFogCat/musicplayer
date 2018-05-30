@@ -1,6 +1,6 @@
-package com.clearcrane.musicplayer.manager;
+package com.clearcrane.musicplayer.musicmanager;
 
-import android.support.annotation.IntDef;
+import com.clearcrane.musicplayer.musicservice.IMusicService;
 
 import java.util.List;
 
@@ -9,34 +9,53 @@ import java.util.List;
  * <p>
  * MusicManager的作用是管理音乐播放的状态，比如播放列表等，并且和外界相连
  */
-
+@SuppressWarnings("unused")
 public interface IMusicManager {
+    void setService(IMusicService service);
+
     /**
      * 设置播放列表
-     *
-     * @param musicList
      */
-    void setPlayList(List<MusicManager.Music> musicList);
+    void setPlayList(List<Music> musicList);
 
-    List<MusicManager.Music> getPlayList();
+    List<Music> getPlayList();
 
     /**
-     * 保存当前播放的音乐
+     * 设置当前播放的音乐
      *
      * @param position 当前播放的音乐的序号
      */
     void setCurrentPlaying(int position);
 
+    /**
+     * 开始播放
+     */
+    void start();
+
+    /**
+     * 开始播放指定曲目
+     */
+    void start(String url);
+
+    /**
+     * 暂停播放
+     */
+    void pause();
+
+    /**
+     * 播放/暂停
+     */
     void playOrPause();
 
+    /**
+     * @return 返回是否正在播放
+     */
     boolean isPlaying();
 
     /**
      * 获取当前播放的音乐
-     *
-     * @return
      */
-    MusicManager.Music getCurrentPlaying();
+    Music getCurrentPlaying();
 
     /**
      * 开始播放
@@ -48,14 +67,14 @@ public interface IMusicManager {
     /**
      * 设置播放进度
      *
-     * @param progress
+     * @param progress 单位毫秒
      */
     void setProgress(int progress);
 
     /**
      * 获取当前播放进度
      *
-     * @return
+     * @return 单位：毫秒
      */
     int getProgress();
 
@@ -74,10 +93,13 @@ public interface IMusicManager {
 
     void playPrevious();
 
+    @Deprecated
     void setOnProgressListener(OnProgressListener listener);
 
+    void addOnProgressListener(OnProgressListener listener);
+
     interface OnProgressListener {
-        void onProgress(MusicManager.Music music, int progress, int duration);
+        void onProgress(Music music, int progress, int duration);
     }
 
     /**
@@ -85,6 +107,7 @@ public interface IMusicManager {
      *
      * @return 当前音量；或-1表示已经到最大音量；或-2其他错误
      */
+    @Deprecated
     int volumeUp();
 
     /**
@@ -92,24 +115,34 @@ public interface IMusicManager {
      *
      * @return 当前音量；或-1表示已经到最小音量；或-2其他错误
      */
+    @Deprecated
     int volumeDown();
 
+    @Deprecated
     int getVolume();
 
+    @Deprecated
     void setVolume(int volume);
 
     /**
      * 设置播放模式
+     * <p>
+     * int ORDERED = 0;
+     * int SHUFFLE = 1;
+     * int SINGLE = 2;
      *
      * @param mode 模式
      */
-    void setPlayMode(@PlayMode int mode);
-
-    @IntDef({ORDERED, SHUFFLE, SINGLE})
-    public @interface PlayMode {
-    }
+    void setPlayMode(int mode);
 
     int ORDERED = 0;
     int SHUFFLE = 1;
     int SINGLE = 2;
+
+    void setOnEventListener(OnEventListener l);
+
+    interface OnEventListener {
+        default void onMusicListChanged(List<Music> oldList, List<Music> newList) {
+        }
+    }
 }

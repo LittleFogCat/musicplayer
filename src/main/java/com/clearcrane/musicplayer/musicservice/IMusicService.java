@@ -1,7 +1,6 @@
-package com.clearcrane.musicplayer.service;
+package com.clearcrane.musicplayer.musicservice;
 
 import android.media.MediaPlayer;
-import android.support.annotation.IntDef;
 
 /**
  * Created by jjy on 2018/5/8.
@@ -33,6 +32,7 @@ public interface IMusicService {
      *
      * @return 当前音量；或-1表示失败
      */
+    @Deprecated
     int volumeUp();
 
     /**
@@ -40,10 +40,13 @@ public interface IMusicService {
      *
      * @return 当前音量；或-1表示失败
      */
+    @Deprecated
     int volumeDown();
 
+    @Deprecated
     int getVolume();
 
+    @Deprecated
     void setVolume(int volume);
 
     boolean isPlaying();
