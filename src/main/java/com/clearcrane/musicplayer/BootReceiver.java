@@ -7,6 +7,9 @@ import android.util.Log;
 
 import com.clearcrane.musicplayer.controller.CoreService;
 
+/**
+ * 入口之开机
+ */
 public class BootReceiver extends BroadcastReceiver {
     private static final String TAG = "BootReceiver";
     public static final String ACTION = "com.clearcrane.musicplayer.intent.action.boot";

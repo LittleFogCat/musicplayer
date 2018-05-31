@@ -8,7 +8,7 @@ import com.clearcrane.musicplayer.musicservice.IMusicService;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.clearcrane.musicplayer.utils.Preconditions.checkNotNull;
+import static com.clearcrane.musicplayer.common.utils.Preconditions.checkNotNull;
 
 /**
  * Created by jjy on 2018/5/8.

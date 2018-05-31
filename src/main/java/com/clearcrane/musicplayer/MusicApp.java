@@ -14,6 +14,8 @@ import java.util.TimerTask;
 
 /**
  * Created by jjy on 2018/5/30.
+ * <p>
+ * 错误重启并保存日志
  */
 
 @SuppressWarnings("ALL")

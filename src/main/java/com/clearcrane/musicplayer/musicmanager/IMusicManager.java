@@ -106,6 +106,7 @@ public interface IMusicManager {
      * 提高音量
      *
      * @return 当前音量；或-1表示已经到最大音量；或-2其他错误
+     * @deprecated 不要使用这个来修改音量了，使用{@link com.clearcrane.musicplayer.common.utils.SystemUtils}
      */
     @Deprecated
     int volumeUp();
@@ -114,13 +115,20 @@ public interface IMusicManager {
      * 降低音量
      *
      * @return 当前音量；或-1表示已经到最小音量；或-2其他错误
+     * @deprecated 不要使用这个来修改音量了，使用{@link com.clearcrane.musicplayer.common.utils.SystemUtils}
      */
     @Deprecated
     int volumeDown();
 
+    /**
+     * @deprecated 不要使用这个来获取音量了，使用{@link com.clearcrane.musicplayer.common.utils.SystemUtils}
+     */
     @Deprecated
     int getVolume();
 
+    /**
+     * @deprecated 不要使用这个来修改音量了，使用{@link com.clearcrane.musicplayer.common.utils.SystemUtils}
+     */
     @Deprecated
     void setVolume(int volume);
 

@@ -5,7 +5,9 @@ import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 
+import com.clearcrane.musicplayer.common.DpadRecorder;
 import com.clearcrane.musicplayer.controller.CoreService;
 import com.clearcrane.musicplayer.musicmanager.IMusicManager;
 import com.clearcrane.musicplayer.musicmanager.Music;
@@ -16,8 +18,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 入口之Launcher
+ */
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+    private DpadRecorder mRecorder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         startService(new Intent(this, CoreService.class));
         initMusicManager(false);
         initUI();
+        mRecorder = DpadRecorder.getInstance();
     }
 
     private void initUI() {
@@ -74,6 +81,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return musicList;
+    }
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (mRecorder != null) mRecorder.onKeyDown(keyCode, event);
+        return super.onKeyDown(keyCode, event);
     }
 
 }

@@ -18,15 +18,15 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.clearcrane.musicplayer.R;
+import com.clearcrane.musicplayer.common.utils.SystemUtils;
 import com.clearcrane.musicplayer.controller.Controller;
 import com.clearcrane.musicplayer.controller.UI;
 import com.clearcrane.musicplayer.musicmanager.IMusicManager;
 import com.clearcrane.musicplayer.musicmanager.Music;
 import com.clearcrane.musicplayer.musicmanager.MusicManager;
-import com.clearcrane.musicplayer.utils.SystemUtils;
 import com.clearcrane.musicplayer.view.WrapperView;
 
-import static com.clearcrane.musicplayer.utils.Preconditions.checkIndexInBounds;
+import static com.clearcrane.musicplayer.common.utils.Preconditions.checkIndexInBounds;
 
 /**
  * Created by jjy on 2018/5/30.
@@ -119,6 +119,12 @@ public class MusicPlayerFragment extends Fragment implements UI {
 
         SystemUtils.setOnVolumeChangeListener(getContext(), this::onVolumeChanged);
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        getActivity().getWindow().getDecorView().getViewTreeObserver().removeOnGlobalFocusChangeListener(mWrapper);
     }
 
     private void initVolumeLayout() {

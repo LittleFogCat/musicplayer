@@ -1,4 +1,4 @@
-package com.clearcrane.musicplayer.utils;
+package com.clearcrane.musicplayer.common.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;

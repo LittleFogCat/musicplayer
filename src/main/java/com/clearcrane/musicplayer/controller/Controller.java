@@ -2,15 +2,15 @@ package com.clearcrane.musicplayer.controller;
 
 import android.util.Log;
 
+import com.clearcrane.musicplayer.common.utils.HardwareUtils;
+import com.clearcrane.musicplayer.common.utils.HttpUtil;
+import com.clearcrane.musicplayer.common.utils.JsonUtil;
 import com.clearcrane.musicplayer.entity.ClientInfoReportRequest;
 import com.clearcrane.musicplayer.entity.GetMusicListJsonFileRequest;
 import com.clearcrane.musicplayer.entity.GetMusicListResponse;
 import com.clearcrane.musicplayer.musicmanager.IMusicManager;
 import com.clearcrane.musicplayer.musicmanager.Music;
 import com.clearcrane.musicplayer.musicmanager.MusicManager;
-import com.clearcrane.musicplayer.utils.HardwareUtils;
-import com.clearcrane.musicplayer.utils.HttpUtil;
-import com.clearcrane.musicplayer.utils.JsonUtil;
 import com.clearcrane.musicplayer.websocket.IWebSocketManager;
 import com.clearcrane.musicplayer.websocket.WebSocketManager;
 
@@ -21,15 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.clearcrane.musicplayer.common.Constant.DEFAULT_WS_ADDR;
-import static com.clearcrane.musicplayer.controller.Constant.WS_CMD;
-import static com.clearcrane.musicplayer.controller.Constant.WS_CMD_CONTROL_MUSIC;
-import static com.clearcrane.musicplayer.controller.Constant.WS_CMD_GET_MUSIC_FILE_JSON;
-import static com.clearcrane.musicplayer.controller.Constant.WS_CMD_REPORT_CLIENT_INFO;
+import static com.clearcrane.musicplayer.common.Constant.WS_CMD;
+import static com.clearcrane.musicplayer.common.Constant.WS_CMD_CONTROL_MUSIC;
+import static com.clearcrane.musicplayer.common.Constant.WS_CMD_GET_MUSIC_FILE_JSON;
+import static com.clearcrane.musicplayer.common.Constant.WS_CMD_REPORT_CLIENT_INFO;
 
 /**
  * Created by jjy on 2018/5/22.
  * <p>
- * 处理业务。
+ * 处理业务逻辑。
  */
 
 @SuppressWarnings("WeakerAccess")
@@ -101,7 +101,8 @@ public class Controller {
     }
 
     /**
-     * 上报mac到服务器
+     * 启动三步：
+     * 1. 上报mac到服务器
      */
     public void reportMacToServer() {
         String mac = HardwareUtils.getMacAddress();
@@ -110,6 +111,24 @@ public class Controller {
         mWebSocket.sendMessage(JsonUtil.obj2Json(report));
     }
 
+    /**
+     * 启动三步：
+     * 2. 获取音乐列表Json文件的URL
+     */
+    public void getMusicListJsonFile() {
+        GetMusicListJsonFileRequest request = new GetMusicListJsonFileRequest();
+        mWebSocket.sendMessage(JsonUtil.obj2Json(request));
+    }
+
+    /**
+     * 启动三步：
+     * 3. 获取音乐列表
+     */
+    public void getMusicList(String url) {
+        Log.d(TAG, "getMusicList: " + url);
+        HttpUtil http = new HttpUtil(url);
+        http.get(this::onMusicListGot);
+    }
 
     /**
      * 解析服务器发送过来的消息
@@ -180,22 +199,6 @@ public class Controller {
         }
     }
 
-    /**
-     * 获取音乐列表Json文件
-     */
-    public void getMusicListJsonFile() {
-        GetMusicListJsonFileRequest request = new GetMusicListJsonFileRequest();
-        mWebSocket.sendMessage(JsonUtil.obj2Json(request));
-    }
-
-    /**
-     * 获取音乐列表
-     */
-    public void getMusicList(String url) {
-        Log.d(TAG, "getMusicList: " + url);
-        HttpUtil http = new HttpUtil(url);
-        http.get(this::onMusicListGot);
-    }
 
     public boolean hasUI() {
         return mHasUI;
