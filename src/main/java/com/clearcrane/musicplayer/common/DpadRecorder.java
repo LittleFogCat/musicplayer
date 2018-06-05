@@ -1,5 +1,6 @@
 package com.clearcrane.musicplayer.common;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 
@@ -78,7 +79,7 @@ public class DpadRecorder {
         }
         for (String s : mCallbackMap.keySet()) {
             int sLen = s.length();
-            if (sLen > len || sLen == 0) {
+            if (sLen > len) {
                 continue;
             }
             String sub = mLastKeys.substring(len - sLen);
@@ -91,11 +92,15 @@ public class DpadRecorder {
     }
 
     public void addCallback(String format, Callback callback) {
-        if (format.length() > 0 && callback != null) {
-            mCallbackMap.put(format, callback);
-            if (format.length() > mMaxLen) {
-                mMaxLen = format.length();
-            }
+        if (TextUtils.isEmpty(format)) {
+            throw new IllegalArgumentException("format string length must not be 0");
+        }
+        if (callback == null) {
+            throw new NullPointerException("callback must not be null");
+        }
+        mCallbackMap.put(format, callback);
+        if (format.length() > mMaxLen) {
+            mMaxLen = format.length();
         }
     }
 

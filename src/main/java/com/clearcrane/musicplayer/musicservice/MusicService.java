@@ -2,7 +2,6 @@ package com.clearcrane.musicplayer.musicservice;
 
 import android.app.Service;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.util.Log;
@@ -14,6 +13,7 @@ public class MusicService extends Service implements IMusicService {
     private static final String TAG = "MusicService";
     public static final String ACTION_MUSIC_SERVICE = "com.clearcrane.musicplayer.intent.action.notify_service_state_changed";
     private MediaPlayer mMediaPlayer;
+    private boolean mPrepared = false;
 
     private MediaPlayer.OnCompletionListener mOnCompletionListener;
 
@@ -29,6 +29,7 @@ public class MusicService extends Service implements IMusicService {
                 mOnCompletionListener.onCompletion(mp);
             }
         });
+        mMediaPlayer.setOnPreparedListener(mp -> mPrepared = true);
         Controller.getInstance().onMusicServiceStarted();
     }
 
@@ -61,36 +62,57 @@ public class MusicService extends Service implements IMusicService {
 
     @Override
     public void pause() {
+        if (!mPrepared) {
+            return;
+        }
         if (isPlaying()) mMediaPlayer.pause();
     }
 
     @Override
     public void resume() {
+        if (!mPrepared) {
+            return;
+        }
         if (!isPlaying()) mMediaPlayer.start();
     }
 
     @Override
     public void stop() {
+        if (!mPrepared) {
+            return;
+        }
         mMediaPlayer.stop();
     }
 
     @Override
     public void restart() {
+        if (!mPrepared) {
+            return;
+        }
         mMediaPlayer.seekTo(0);
     }
 
     @Override
     public void setPosition(int position) {
+        if (!mPrepared) {
+            return;
+        }
         mMediaPlayer.seekTo(position);
     }
 
     @Override
     public int getPosition() {
+        if (!mPrepared) {
+            return 0;
+        }
         return mMediaPlayer.getCurrentPosition();
     }
 
     @Override
     public int getDuration() {
+        if (!mPrepared) {
+            return 0;
+        }
         return mMediaPlayer.getDuration();
     }
 
@@ -100,58 +122,13 @@ public class MusicService extends Service implements IMusicService {
     }
 
     @Override
-    public int volumeUp() {
-        AudioManager audio = (AudioManager) getSystemService(AUDIO_SERVICE);
-        if (audio == null) {
-            return -1;
-        }
-        int currentVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
-        int maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-        if (currentVolume >= maxVolume) {
-            return currentVolume;
-        }
-        audio.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume + 1, 0);
-
-        return audio.getStreamVolume(AudioManager.STREAM_MUSIC);
-    }
-
-    @Override
-    public int volumeDown() {
-        AudioManager audio = (AudioManager) getSystemService(AUDIO_SERVICE);
-        if (audio == null) {
-            return -1;
-        }
-        int currentVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
-        int minVolume = 0;
-        if (currentVolume <= minVolume) {
-            return currentVolume;
-        }
-        audio.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume - 1, 0);
-
-        return audio.getStreamVolume(AudioManager.STREAM_MUSIC);
-    }
-
-    @Override
-    public int getVolume() {
-        AudioManager audio = (AudioManager) getSystemService(AUDIO_SERVICE);
-        if (audio == null) {
-            return -1;
-        }
-        return audio.getStreamVolume(AudioManager.STREAM_MUSIC);
-    }
-
-    @Override
-    public void setVolume(int volume) {
-        AudioManager audio = (AudioManager) getSystemService(AUDIO_SERVICE);
-        if (audio == null) {
-            return;
-        }
-        audio.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0);
-    }
-
-    @Override
     public boolean isPlaying() {
-        return mMediaPlayer != null && mMediaPlayer.isPlaying();
+        return mPrepared && mMediaPlayer != null && mMediaPlayer.isPlaying();
+    }
+
+    @Override
+    public boolean isPrepared() {
+        return mPrepared;
     }
 
     @Override

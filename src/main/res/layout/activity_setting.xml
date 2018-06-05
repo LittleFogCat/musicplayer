@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context="com.clearcrane.musicplayer.SettingActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="主页地址："
+        android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/etHome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="输入主页地址"
+        android:textColorHint="#888"
+        android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="#29a"
+        android:padding="12dp"
+        android:text="保存"
+        android:textColor="#fff"
+        android:textSize="28sp" />
+</LinearLayout>

@@ -4,6 +4,8 @@ import java.util.List;
 
 /**
  * Created by jjy on 2018/5/10.
+ *
+ * Preconditions
  */
 
 public class Preconditions {
@@ -21,7 +23,7 @@ public class Preconditions {
         return array[index];
     }
 
-    public <T> boolean isEmpty(List<T> list) {
+    public static <T> boolean isEmpty(List<T> list) {
         return list == null || list.isEmpty();
     }
 }

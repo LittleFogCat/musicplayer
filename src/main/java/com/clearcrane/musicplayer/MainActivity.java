@@ -1,13 +1,14 @@
 package com.clearcrane.musicplayer;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 
 import com.clearcrane.musicplayer.common.DpadRecorder;
+import com.clearcrane.musicplayer.common.utils.SPUtils;
 import com.clearcrane.musicplayer.controller.CoreService;
 import com.clearcrane.musicplayer.musicmanager.IMusicManager;
 import com.clearcrane.musicplayer.musicmanager.Music;
@@ -21,22 +22,27 @@ import java.util.List;
 /**
  * 入口之Launcher
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
     private DpadRecorder mRecorder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SPUtils.init(this);
         setContentView(R.layout.activity_main);
         startService(new Intent(this, CoreService.class));
         initMusicManager(false);
         initUI();
         mRecorder = DpadRecorder.getInstance();
+        mRecorder.addCallback("udlr123", () -> {
+            Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void initUI() {
-        getSupportFragmentManager().beginTransaction()
+        getFragmentManager().beginTransaction()
                 .add(R.id.container, new MusicPlayerFragment())
                 .commit();
     }

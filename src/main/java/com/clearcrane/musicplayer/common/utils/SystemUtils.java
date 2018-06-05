@@ -10,9 +10,19 @@ import static android.content.Context.AUDIO_SERVICE;
 
 /**
  * Created by jjy on 2018/5/30.
+ * <p>
+ * 系统相关工具类
  */
 
 public class SystemUtils {
+    public static void setVolume(Context context, int volume) {
+        AudioManager audio = (AudioManager) context.getSystemService(AUDIO_SERVICE);
+        if (audio == null) {
+            return;
+        }
+        audio.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0);
+    }
+
     public static int getCurrentVolume(Context context) {
         AudioManager audio = (AudioManager) context.getSystemService(AUDIO_SERVICE);
         if (audio == null) {
@@ -50,5 +60,14 @@ public class SystemUtils {
 
     public interface OnVolumeChangeListener {
         void onVolumeChanged();
+    }
+
+    /**
+     * 发送重启广播给Controller
+     */
+    public static void reboot(Context context) {
+        Intent intent = new Intent("com.cleartv.controller.intent.SHELL");
+        intent.putExtra("command", "reboot");
+        context.sendBroadcast(intent);
     }
 }

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Music Player</string>
+    <string name="reboot_tip">系统将在30秒后自动重启，按任意键取消…\nSystem will reboot in 30 seconds, press any key to cancel…</string>
 </resources>

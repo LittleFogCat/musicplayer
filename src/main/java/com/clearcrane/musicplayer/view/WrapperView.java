@@ -2,7 +2,6 @@ package com.clearcrane.musicplayer.view;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -35,11 +34,11 @@ public class WrapperView extends View implements ViewTreeObserver.OnGlobalFocusC
         super(context);
     }
 
-    public WrapperView(Context context, @Nullable AttributeSet attrs) {
+    public WrapperView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public WrapperView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public WrapperView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

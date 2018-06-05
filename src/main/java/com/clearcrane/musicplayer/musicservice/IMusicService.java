@@ -27,27 +27,7 @@ public interface IMusicService {
 
     void setOnCompleteListener(MediaPlayer.OnCompletionListener listener);
 
-    /**
-     * 提高音量
-     *
-     * @return 当前音量；或-1表示失败
-     */
-    @Deprecated
-    int volumeUp();
-
-    /**
-     * 降低音量
-     *
-     * @return 当前音量；或-1表示失败
-     */
-    @Deprecated
-    int volumeDown();
-
-    @Deprecated
-    int getVolume();
-
-    @Deprecated
-    void setVolume(int volume);
-
     boolean isPlaying();
+
+    boolean isPrepared();
 }

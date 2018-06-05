@@ -33,8 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/d32"
             android:background="@drawable/round_rect_white"
-            android:paddingLeft="@dimen/d18"
-            android:paddingRight="@dimen/d18"
+            android:padding="@dimen/d18"
             android:text="顺序播放"
             android:textColor="#fff"
             android:textSize="18sp" />
@@ -167,7 +166,7 @@
 
     <com.clearcrane.musicplayer.view.WrapperView
         android:id="@+id/focusBox"
-        android:layout_width="@dimen/d40"
-        android:layout_height="@dimen/d40"
+        android:layout_width="0px"
+        android:layout_height="0px"
         android:background="@drawable/round_rect" />
 </FrameLayout>

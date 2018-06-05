@@ -1,10 +1,9 @@
 package com.clearcrane.musicplayer.ui;
 
 import android.annotation.SuppressLint;
+import android.app.Fragment;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -83,16 +82,16 @@ public class MusicPlayerFragment extends Fragment implements UI {
         }
     };
 
-    @Nullable
+
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.music_player_fragment, container, false);
         Controller.getInstance().setUI(this);
         return root;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(View view,  Bundle savedInstanceState) {
         mBtnInit = findViewById(R.id.btn);
 //        mBtnInit.setOnClickListener(v -> initMusicManager());
         mBtnNext = findViewById(R.id.btnPlayNext);
@@ -117,7 +116,7 @@ public class MusicPlayerFragment extends Fragment implements UI {
         ViewTreeObserver observer = getActivity().getWindow().getDecorView().getViewTreeObserver();
         observer.addOnGlobalFocusChangeListener(mWrapper);
 
-        SystemUtils.setOnVolumeChangeListener(getContext(), this::onVolumeChanged);
+        SystemUtils.setOnVolumeChangeListener(getActivity(), this::onVolumeChanged);
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -134,7 +133,7 @@ public class MusicPlayerFragment extends Fragment implements UI {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                    mManager.setVolume(progress);
+                    SystemUtils.setVolume(getActivity(), progress);
                     mTvVolume.setText(String.valueOf(progress));
                 }
             }
@@ -160,17 +159,17 @@ public class MusicPlayerFragment extends Fragment implements UI {
             }
             return false;
         });
-        mSbVolume.setMax(SystemUtils.getMaxVolume(getContext()));
+        mSbVolume.setMax(SystemUtils.getMaxVolume(getActivity()));
         onVolumeChanged();
     }
 
     private void changePlayState() {
         if (mManager.isPlaying()) {
             Log.d(TAG, "changePlayState: is playing...");
-            mBtnPlay.setImageResource(R.drawable.ic_pause);
+            mBtnPlay.setImageResource(R.drawable.ic_play);
         } else {
             Log.d(TAG, "changePlayState: is not playing...");
-            mBtnPlay.setImageResource(R.drawable.ic_play);
+            mBtnPlay.setImageResource(R.drawable.ic_pause);
         }
         mManager.playOrPause();
     }
@@ -232,7 +231,7 @@ public class MusicPlayerFragment extends Fragment implements UI {
     }
 
     private void onVolumeChanged() {
-        int volume = SystemUtils.getCurrentVolume(getContext());
+        int volume = SystemUtils.getCurrentVolume(getActivity());
         mTvVolume.setText(String.valueOf(volume));
         mSbVolume.setProgress(volume);
     }

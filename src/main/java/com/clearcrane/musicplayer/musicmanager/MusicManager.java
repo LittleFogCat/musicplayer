@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.clearcrane.musicplayer.common.utils.Preconditions.checkNotNull;
+import static com.clearcrane.musicplayer.common.utils.Preconditions.isEmpty;
 
 /**
  * Created by jjy on 2018/5/8.
@@ -27,7 +28,7 @@ public class MusicManager implements IMusicManager {
     private List<OnProgressListener> mOnProgressListenerList = new ArrayList<>();
 
     private MusicManager() {
-        mHandler.postDelayed(mProgressTask, 500);
+        mHandler.postDelayed(mProgressTask, 1000);
     }
 
     public static IMusicManager getInstance() {
@@ -129,38 +130,6 @@ public class MusicManager implements IMusicManager {
     }
 
     @Override
-    public int volumeUp() {
-        if (mService == null) {
-            return 0;
-        }
-        return mService.volumeUp();
-    }
-
-    @Override
-    public int volumeDown() {
-        if (mService == null) {
-            return 0;
-        }
-        return mService.volumeDown();
-    }
-
-    @Override
-    public int getVolume() {
-        if (mService == null) {
-            return 0;
-        }
-        return mService.getVolume();
-    }
-
-    @Override
-    public void setVolume(int volume) {
-        if (mService == null) {
-            return;
-        }
-        mService.setVolume(volume);
-    }
-
-    @Override
     public void setPlayMode(int mode) {
         // TODO: 2018/5/10
     }
@@ -195,7 +164,12 @@ public class MusicManager implements IMusicManager {
 
     @Override
     public void playOrPause() {
-        if (isPlaying()) {
+        if (!mService.isPrepared()) {
+            if (isEmpty(mPlayList)) {
+                return;
+            }
+            mService.play(mPlayList.get(0).url);
+        } else if (isPlaying()) {
             mService.pause();
         } else {
             mService.resume();
@@ -272,6 +246,5 @@ public class MusicManager implements IMusicManager {
             }
         }
     };
-
 
 }

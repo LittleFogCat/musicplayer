@@ -51,11 +51,12 @@ public class MusicApp extends Application implements Thread.UncaughtExceptionHan
             e1.printStackTrace();
         }
 
-        Intent intent = new Intent(BootReceiver.ACTION);
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                sendBroadcast(intent);
+                startActivity(intent);
             }
         }, 3000);
 
