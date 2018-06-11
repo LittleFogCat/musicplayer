@@ -1,4 +1,4 @@
-package com.clearcrane.musicplayer.controller;
+package com.clearcrane.musicplayer.ui;
 
 import com.clearcrane.musicplayer.musicmanager.Music;
 
@@ -9,5 +9,5 @@ import com.clearcrane.musicplayer.musicmanager.Music;
  */
 
 public interface UI {
-    void onMusicProgress(Music music, int progress, int duration);
+    void onMusicProgress(Music music, int progress, int duration, boolean isPlaying);
 }

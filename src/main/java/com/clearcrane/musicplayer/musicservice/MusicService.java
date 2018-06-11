@@ -45,16 +45,13 @@ public class MusicService extends Service implements IMusicService {
         try {
             Log.d(TAG, "play: " + url);
             if (mMediaPlayer.isPlaying()) {
-                mMediaPlayer.reset();
-                mMediaPlayer.setDataSource(url);
-                mMediaPlayer.prepare();
-                mMediaPlayer.start();
-            } else {
-                mMediaPlayer.reset();
-                mMediaPlayer.setDataSource(url);
-                mMediaPlayer.prepare();
-                mMediaPlayer.start();
+                mMediaPlayer.stop();
             }
+            mMediaPlayer.reset();
+            mPrepared = false;
+            mMediaPlayer.setDataSource(url);
+            mMediaPlayer.prepare();
+            mMediaPlayer.start();
         } catch (Exception e) {
             e.printStackTrace();
         }

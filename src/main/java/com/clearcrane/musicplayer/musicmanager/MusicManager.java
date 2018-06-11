@@ -141,7 +141,7 @@ public class MusicManager implements IMusicManager {
 
     @Override
     public void playNext() {
-        if (mService == null) {
+        if (mService == null || mPlayList.isEmpty()) {
             return;
         }
         mCurrentMusicIndex = mCurrentMusicIndex >= mPlayList.size() - 1 ? 0 : mCurrentMusicIndex + 1;
@@ -152,8 +152,7 @@ public class MusicManager implements IMusicManager {
 
     @Override
     public void playPrevious() {
-        Log.d(TAG, "playPrevious: ");
-        if (mService == null) {
+        if (mService == null || isEmpty(mPlayList)) {
             return;
         }
         mCurrentMusicIndex = mCurrentMusicIndex <= 0 ? mPlayList.size() - 1 : mCurrentMusicIndex - 1;
@@ -164,10 +163,10 @@ public class MusicManager implements IMusicManager {
 
     @Override
     public void playOrPause() {
+        if (isEmpty(mPlayList)) {
+            return;
+        }
         if (!mService.isPrepared()) {
-            if (isEmpty(mPlayList)) {
-                return;
-            }
             mService.play(mPlayList.get(0).url);
         } else if (isPlaying()) {
             mService.pause();
@@ -223,12 +222,12 @@ public class MusicManager implements IMusicManager {
     }
 
     private void notifyProgressChanged(Music music, int progress, int duration) {
-        Log.v(TAG, "notifyProgressChanged: " + music + "\n" + progress + "/" + duration);
+        Log.v(TAG, "notifyProgressChanged: " + music.name + " - " + progress + "/" + duration);
         for (OnProgressListener onProgressListener : mOnProgressListenerList) {
-            onProgressListener.onProgress(music, progress, duration);
+            onProgressListener.onProgress(music, progress, duration, mService.isPlaying());
         }
         if (mProgressListener != null) {
-            mProgressListener.onProgress(music, progress, duration);
+            mProgressListener.onProgress(music, progress, duration, mService.isPlaying());
         }
     }
 
@@ -237,7 +236,10 @@ public class MusicManager implements IMusicManager {
         @Override
         public void run() {
             if (mPlayList.isEmpty()) {
-                Log.v(TAG, "ProgressTask: empty");
+                Log.v(TAG, "Update Playing State: empty");
+                mHandler.postDelayed(this, 3000);
+            } else if (!mService.isPrepared()) {
+                Log.v(TAG, "Update Playing State: not prepared");
                 mHandler.postDelayed(this, 3000);
             } else {
                 Music music = mPlayList.get(mCurrentMusicIndex);

@@ -23,6 +23,8 @@ public class WebSocketManager implements IWebSocketManager {
     private WebSocketClient mClient;
     private OnWebSocketListener mOnWebSocketListener = message -> Log.d(TAG, "onMessage: " + message);
     private String mUri;
+    private HeartbeatThread mHeartbeatThread;
+    private boolean mIsConnected;
 
     public WebSocketManager(String uri) {
         mUri = uri;
@@ -66,6 +68,9 @@ public class WebSocketManager implements IWebSocketManager {
             @Override
             public void onOpen(ServerHandshake handshakedata) {
                 mOnWebSocketListener.onOpen(handshakedata);
+                mIsConnected = true;
+                mHeartbeatThread = new HeartbeatThread();
+                mHeartbeatThread.start();
             }
 
             @Override
@@ -75,14 +80,41 @@ public class WebSocketManager implements IWebSocketManager {
 
             @Override
             public void onClose(int code, String reason, boolean remote) {
+                mIsConnected = false;
+                mHeartbeatThread.exit();
                 mOnWebSocketListener.onClose(code, reason, remote);
                 reconnect();
             }
 
             @Override
             public void onError(Exception ex) {
+                mIsConnected = false;
                 mOnWebSocketListener.onError(ex);
             }
         };
+    }
+
+    private class HeartbeatThread extends Thread {
+        private final Object mLock = new Object();
+        private boolean mValid = true;
+
+        @Override
+        public void run() {
+            while (mIsConnected && mValid) {
+                mClient.send("@heartbeat");
+                synchronized (mLock) {
+                    try {
+                        mLock.wait(45000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        public void exit() {
+            mValid = false;
+            mLock.notify();
+        }
     }
 }

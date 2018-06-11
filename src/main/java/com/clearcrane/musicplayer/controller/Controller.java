@@ -11,6 +11,7 @@ import com.clearcrane.musicplayer.entity.GetMusicListResponse;
 import com.clearcrane.musicplayer.musicmanager.IMusicManager;
 import com.clearcrane.musicplayer.musicmanager.Music;
 import com.clearcrane.musicplayer.musicmanager.MusicManager;
+import com.clearcrane.musicplayer.ui.UI;
 import com.clearcrane.musicplayer.websocket.IWebSocketManager;
 import com.clearcrane.musicplayer.websocket.WebSocketManager;
 
@@ -225,7 +226,7 @@ public class Controller {
     /**
      * 音乐播放状态上报
      */
-    private void onMusicProgress(Music music, int progress, int duration) {
+    private void onMusicProgress(Music music, int progress, int duration, boolean isPlaying) {
         if (!mSocketConnected) {
             Log.w(TAG, "onMusicProgress: Socket is not connected!");
             return;
@@ -235,7 +236,7 @@ public class Controller {
             return;
         }
         if (mUI != null) {
-            mUI.onMusicProgress(music, progress, duration);
+            mUI.onMusicProgress(music, progress, duration, isPlaying);
         }
         Log.v(TAG, "onMusicProgress: onProgress " + ((float) progress) / duration);
     }

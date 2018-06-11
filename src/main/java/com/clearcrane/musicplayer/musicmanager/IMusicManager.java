@@ -99,7 +99,7 @@ public interface IMusicManager {
     void addOnProgressListener(OnProgressListener listener);
 
     interface OnProgressListener {
-        void onProgress(Music music, int progress, int duration);
+        void onProgress(Music music, int progress, int duration, boolean isPlaying);
     }
 
     /**

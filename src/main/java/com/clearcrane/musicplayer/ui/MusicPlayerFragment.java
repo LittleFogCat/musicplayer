@@ -19,7 +19,6 @@ import android.widget.TextView;
 import com.clearcrane.musicplayer.R;
 import com.clearcrane.musicplayer.common.utils.SystemUtils;
 import com.clearcrane.musicplayer.controller.Controller;
-import com.clearcrane.musicplayer.controller.UI;
 import com.clearcrane.musicplayer.musicmanager.IMusicManager;
 import com.clearcrane.musicplayer.musicmanager.Music;
 import com.clearcrane.musicplayer.musicmanager.MusicManager;
@@ -82,16 +81,17 @@ public class MusicPlayerFragment extends Fragment implements UI {
         }
     };
 
+    private boolean mIsPlaying;// 当前播放状态
 
     @Override
-    public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.music_player_fragment, container, false);
         Controller.getInstance().setUI(this);
         return root;
     }
 
     @Override
-    public void onViewCreated(View view,  Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         mBtnInit = findViewById(R.id.btn);
 //        mBtnInit.setOnClickListener(v -> initMusicManager());
         mBtnNext = findViewById(R.id.btnPlayNext);
@@ -113,17 +113,27 @@ public class MusicPlayerFragment extends Fragment implements UI {
 
         mIvCover = findViewById(R.id.ivCover);
         mWrapper = findViewById(R.id.focusBox);
-        ViewTreeObserver observer = getActivity().getWindow().getDecorView().getViewTreeObserver();
-        observer.addOnGlobalFocusChangeListener(mWrapper);
 
         SystemUtils.setOnVolumeChangeListener(getActivity(), this::onVolumeChanged);
         super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        ViewTreeObserver observer = getActivity().getWindow().getDecorView().getViewTreeObserver();
+        observer.addOnGlobalFocusChangeListener(mWrapper);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().getWindow().getDecorView().getViewTreeObserver().removeOnGlobalFocusChangeListener(mWrapper);
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
-        getActivity().getWindow().getDecorView().getViewTreeObserver().removeOnGlobalFocusChangeListener(mWrapper);
     }
 
     private void initVolumeLayout() {
@@ -164,14 +174,21 @@ public class MusicPlayerFragment extends Fragment implements UI {
     }
 
     private void changePlayState() {
-        if (mManager.isPlaying()) {
-            Log.d(TAG, "changePlayState: is playing...");
-            mBtnPlay.setImageResource(R.drawable.ic_play);
-        } else {
-            Log.d(TAG, "changePlayState: is not playing...");
-            mBtnPlay.setImageResource(R.drawable.ic_pause);
-        }
+        onPlayingStateUpdate(!mManager.isPlaying());
         mManager.playOrPause();
+    }
+
+    private void onPlayingStateUpdate(boolean playing) {
+        if (mIsPlaying == playing) {
+            return;
+        }
+        if (playing) {
+            // 播放状态下，图标变成暂停
+            mBtnPlay.setImageResource(R.drawable.ic_pause);
+        } else {
+            mBtnPlay.setImageResource(R.drawable.ic_play);
+        }
+        mIsPlaying = playing;
     }
 
     private void changePlayMode() {
@@ -187,10 +204,10 @@ public class MusicPlayerFragment extends Fragment implements UI {
     }
 
     private void changePlayMode(int index) {
+        // todo 循环模式
         checkIndexInBounds(Modes, index);
         mBtnMode.setText(Modes[index]);
     }
-
 
     @SuppressLint("DefaultLocale")
     private String getTimeString(int millisecond) {
@@ -201,7 +218,7 @@ public class MusicPlayerFragment extends Fragment implements UI {
     }
 
     @Override
-    public void onMusicProgress(Music music, int progress, int duration) {
+    public void onMusicProgress(Music music, int progress, int duration, boolean isPlaying) {
         Log.v(TAG, "onProgressChanged: " + progress);
         if (duration == 0) {
             duration = 1;
@@ -218,16 +235,14 @@ public class MusicPlayerFragment extends Fragment implements UI {
             String showText = music.name + "(artist: " + music.artist + ")";
             mTvCurrentPlay.setText(showText);
             if (music.albumCover != null) {
-                mIvCover.setImageBitmap(
-                        BitmapFactory.decodeByteArray(
-                                music.albumCover, 0, music.albumCover.length
-                        )
-                );
+                mIvCover.setImageBitmap(BitmapFactory.decodeByteArray(
+                        music.albumCover, 0, music.albumCover.length
+                ));
             } else {
                 mIvCover.setImageResource(R.drawable.album_default);
             }
         }
-
+        onPlayingStateUpdate(isPlaying);
     }
 
     private void onVolumeChanged() {
