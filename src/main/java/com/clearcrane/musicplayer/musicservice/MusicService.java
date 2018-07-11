@@ -68,8 +68,10 @@ public class MusicService extends Service implements IMusicService {
     @Override
     public void resume() {
         if (!mPrepared) {
+            Log.i(TAG, "resume: not prepared");
             return;
         }
+        Log.d(TAG, "resume");
         if (!isPlaying()) mMediaPlayer.start();
     }
 

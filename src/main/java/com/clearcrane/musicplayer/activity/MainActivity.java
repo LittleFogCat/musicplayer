@@ -1,4 +1,4 @@
-package com.clearcrane.musicplayer;
+package com.clearcrane.musicplayer.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 
+import com.clearcrane.musicplayer.R;
 import com.clearcrane.musicplayer.common.DpadRecorder;
 import com.clearcrane.musicplayer.common.utils.SPUtils;
 import com.clearcrane.musicplayer.controller.CoreService;
@@ -24,18 +25,19 @@ import java.util.List;
  */
 public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
+    public static File LOCAL_MUSIC_DIR;
     private DpadRecorder mRecorder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SPUtils.init(this);
+        LOCAL_MUSIC_DIR = new File(getFilesDir(), "music");
         setContentView(R.layout.activity_main);
         startService(new Intent(this, CoreService.class));
-        initMusicManager(false);
+        initMusicManager(true);
         initUI();
         mRecorder = DpadRecorder.getInstance();
-        mRecorder.addCallback("udlr123", () -> {
+        mRecorder.addCallback("uuddlrlr", () -> {
             Intent intent = new Intent(MainActivity.this, SettingActivity.class);
             startActivity(intent);
         });
@@ -55,14 +57,14 @@ public class MainActivity extends Activity {
                 return;
             }
             mManager.setPlayList(musicList);
-            mManager.startPlay(0);
+//            mManager.startPlay(0);
         }
     }
 
     private List<Music> listMusic() {
-        File dir = new File("/data/local/tmp/");
+        File dir = LOCAL_MUSIC_DIR;
         Log.d(TAG, "listMusic: " + dir);
-        if (!dir.exists() || !dir.isDirectory()) {
+        if (!dir.exists() && !dir.mkdirs() || !dir.isDirectory()) {
             return null;
         }
 
@@ -73,7 +75,8 @@ public class MainActivity extends Activity {
             if (!(file.endsWith(".mp3") || file.endsWith("m4a") || file.endsWith("wav"))) {
                 continue;
             }
-            String uri = "/data/local/tmp/" + File.separator + file;
+            String uri = LOCAL_MUSIC_DIR.getAbsolutePath() + File.separator + file;
+            Log.d(TAG, "listMusic: uri = " + uri);
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             retriever.setDataSource(uri);
             String title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
@@ -89,11 +92,12 @@ public class MainActivity extends Activity {
         return musicList;
     }
 
-
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (mRecorder != null) mRecorder.onKeyDown(keyCode, event);
-        return super.onKeyDown(keyCode, event);
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (mRecorder != null) mRecorder.onKeyDown(event.getKeyCode(), event);
+        }
+        return super.dispatchKeyEvent(event);
     }
 
 }

@@ -9,8 +9,9 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 
-import com.clearcrane.musicplayer.RebootActivity;
+import com.clearcrane.musicplayer.activity.RebootActivity;
 import com.clearcrane.musicplayer.common.utils.DateUtil;
+import com.clearcrane.musicplayer.common.utils.SPUtils;
 import com.clearcrane.musicplayer.musicservice.MusicService;
 
 import java.util.Calendar;
@@ -46,7 +47,8 @@ public class CoreService extends Service {
 
     private void initController() {
         mController = Controller.getInstance();
-        mController.startWork();
+        boolean isLocal = SPUtils.getInstance().get("is_local", false);
+        mController.startWork(this, isLocal);
     }
 
     private void startMusicService() {

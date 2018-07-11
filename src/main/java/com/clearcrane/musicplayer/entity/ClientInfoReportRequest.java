@@ -7,4 +7,5 @@ package com.clearcrane.musicplayer.entity;
 public class ClientInfoReportRequest {
     public String wsCmd = "reportClientInfo";
     public String mac;
+    public String ip;
 }

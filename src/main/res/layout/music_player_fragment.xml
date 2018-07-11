@@ -9,7 +9,7 @@
     android:paddingLeft="@dimen/d44"
     android:paddingRight="@dimen/d44"
     android:paddingTop="@dimen/d28"
-    tools:context="com.clearcrane.musicplayer.MainActivity">
+    tools:context="com.clearcrane.musicplayer.activity.MainActivity">
 
     <ImageView
         android:id="@+id/ivCover"
@@ -169,4 +169,14 @@
         android:layout_width="0px"
         android:layout_height="0px"
         android:background="@drawable/round_rect" />
+
+    <TextView
+        android:id="@+id/tvCurrentPosition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|top"
+        android:layout_margin="16dp"
+        android:text="当前：0/0"
+        android:textColor="#333"
+        android:textSize="20sp" />
 </FrameLayout>

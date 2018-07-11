@@ -2,6 +2,7 @@ package com.clearcrane.musicplayer.common.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -28,7 +29,7 @@ public class HttpUtil {
         }
     }
 
-    public void get(Callback callback) {
+    public void getAsync(Callback callback) {
         StringBuilder content = new StringBuilder();
         thread.execute(() -> {
             try {
@@ -43,6 +44,19 @@ public class HttpUtil {
                 e.printStackTrace();
             }
         });
+    }
+
+    public InputStream getInputStream() {
+        try {
+            return mConn.getInputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public String head(String field){
+        return mConn.getHeaderField(field);
     }
 
     public interface Callback {

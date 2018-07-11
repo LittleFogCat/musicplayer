@@ -3,6 +3,10 @@ package com.clearcrane.musicplayer;
 import android.app.Application;
 import android.content.Intent;
 
+import com.clearcrane.musicplayer.activity.MainActivity;
+import com.clearcrane.musicplayer.common.utils.SPUtils;
+import com.clearcrane.musicplayer.common.utils.SystemUtils;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,6 +28,8 @@ public class MusicApp extends Application implements Thread.UncaughtExceptionHan
     public void onCreate() {
         super.onCreate();
         Thread.setDefaultUncaughtExceptionHandler(this);
+        SystemUtils.getInstance().init(this);
+        SPUtils.init(this);
     }
 
     @Override

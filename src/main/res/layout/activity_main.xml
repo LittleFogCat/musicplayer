@@ -9,7 +9,7 @@
     android:paddingLeft="@dimen/d44"
     android:paddingRight="@dimen/d44"
     android:paddingTop="@dimen/d28"
-    tools:context="com.clearcrane.musicplayer.MainActivity">
+    tools:context="com.clearcrane.musicplayer.activity.MainActivity">
 
     <FrameLayout
         android:id="@+id/container"

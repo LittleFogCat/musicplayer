@@ -35,6 +35,9 @@ import static com.clearcrane.musicplayer.common.utils.Preconditions.checkIndexIn
 public class MusicPlayerFragment extends Fragment implements UI {
     private static final String TAG = "MusicPlayerFragment";
     private static final String[] Modes = {"顺序播放", "随机播放", "单曲循环"};
+
+    private Controller mController;
+
     private Button mBtnInit;
     private ImageButton mBtnNext;
     private ImageButton mBtnPre;
@@ -48,6 +51,7 @@ public class MusicPlayerFragment extends Fragment implements UI {
     private SeekBar mSbVolume;
     private ViewGroup mVolumeLayout;
     private ImageView mIvCover;
+    private TextView mTvCurPos;
 
     private WrapperView mWrapper;
 
@@ -83,10 +87,14 @@ public class MusicPlayerFragment extends Fragment implements UI {
 
     private boolean mIsPlaying;// 当前播放状态
 
+    public MusicPlayerFragment() {
+        mController = Controller.getInstance();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.music_player_fragment, container, false);
-        Controller.getInstance().setUI(this);
+        mController.setUI(this);
         return root;
     }
 
@@ -115,6 +123,8 @@ public class MusicPlayerFragment extends Fragment implements UI {
         mWrapper = findViewById(R.id.focusBox);
 
         SystemUtils.setOnVolumeChangeListener(getActivity(), this::onVolumeChanged);
+
+        mController.notifyUICreated();
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -170,6 +180,8 @@ public class MusicPlayerFragment extends Fragment implements UI {
             return false;
         });
         mSbVolume.setMax(SystemUtils.getMaxVolume(getActivity()));
+
+        mTvCurPos = findViewById(R.id.tvCurrentPosition);
         onVolumeChanged();
     }
 
@@ -218,7 +230,7 @@ public class MusicPlayerFragment extends Fragment implements UI {
     }
 
     @Override
-    public void onMusicProgress(Music music, int progress, int duration, boolean isPlaying) {
+    public void notifyProgressChanged(Music music, int progress, int duration, boolean isPlaying) {
         Log.v(TAG, "onProgressChanged: " + progress);
         if (duration == 0) {
             duration = 1;
@@ -243,6 +255,12 @@ public class MusicPlayerFragment extends Fragment implements UI {
             }
         }
         onPlayingStateUpdate(isPlaying);
+    }
+
+    @SuppressLint("DefaultLocale")
+    @Override
+    public void notifyMusicPositionChanged(int oldPos, int newPos, int oldTotal, int newTotal) {
+        getActivity().runOnUiThread(() -> mTvCurPos.setText(String.format("当前位置：%d / %d", newPos, newTotal)));
     }
 
     private void onVolumeChanged() {

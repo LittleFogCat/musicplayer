@@ -60,7 +60,7 @@ public class WebSocketManager implements IWebSocketManager {
             Log.d(TAG, "websocket reconnecting... /" + new Date());
             mClient = createClient(mUri);
             mClient.connect();
-        }, 3000);
+        }, 10000);
     }
 
     private WebSocketClient createClient(String uri) {
@@ -90,31 +90,28 @@ public class WebSocketManager implements IWebSocketManager {
             public void onError(Exception ex) {
                 mIsConnected = false;
                 mOnWebSocketListener.onError(ex);
+                reconnect();
             }
         };
     }
 
     private class HeartbeatThread extends Thread {
-        private final Object mLock = new Object();
         private boolean mValid = true;
 
         @Override
         public void run() {
             while (mIsConnected && mValid) {
-                mClient.send("@heartbeat");
-                synchronized (mLock) {
-                    try {
-                        mLock.wait(45000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                mClient.send("{\"wsCmd\":\"heartbeat\"}");
+                try {
+                    Thread.sleep(45000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
 
         public void exit() {
             mValid = false;
-            mLock.notify();
         }
     }
 }

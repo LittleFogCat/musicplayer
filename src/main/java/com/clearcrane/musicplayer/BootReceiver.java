@@ -21,7 +21,7 @@ public class BootReceiver extends BroadcastReceiver {
             Log.w(TAG, "onReceive: " + intent.getAction());
             return;
         }
-        Log.d(TAG, "onReceive: " + intent.getAction());
+        Log.d(TAG, "MusicPlayer onReceive: " + intent.getAction());
         Intent i = new Intent(context, CoreService.class);
         context.startService(i);
     }

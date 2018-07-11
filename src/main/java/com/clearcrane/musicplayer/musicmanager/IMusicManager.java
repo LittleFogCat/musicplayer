@@ -52,6 +52,8 @@ public interface IMusicManager {
      */
     boolean isPlaying();
 
+    int getCurrentPlayingIndex();
+
     /**
      * 获取当前播放的音乐
      */

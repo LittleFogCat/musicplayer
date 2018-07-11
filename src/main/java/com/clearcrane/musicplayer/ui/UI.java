@@ -9,5 +9,7 @@ import com.clearcrane.musicplayer.musicmanager.Music;
  */
 
 public interface UI {
-    void onMusicProgress(Music music, int progress, int duration, boolean isPlaying);
+    void notifyProgressChanged(Music music, int progress, int duration, boolean isPlaying);
+
+    void notifyMusicPositionChanged(int oldPos, int newPos, int oldTotal, int newTotal);
 }

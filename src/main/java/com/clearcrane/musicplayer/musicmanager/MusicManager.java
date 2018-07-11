@@ -27,6 +27,11 @@ public class MusicManager implements IMusicManager {
     private OnProgressListener mProgressListener;
     private List<OnProgressListener> mOnProgressListenerList = new ArrayList<>();
 
+    /**
+     * 是否连续播放，当播放欢迎乐的时候，不需要连续播放，只用放一首
+     */
+    private boolean mShouldPlayNextWhenComplete = true;
+
     private MusicManager() {
         mHandler.postDelayed(mProgressTask, 1000);
     }
@@ -45,7 +50,11 @@ public class MusicManager implements IMusicManager {
             return;
         }
         mService = service;
-        mService.setOnCompleteListener(mp -> playNext());
+        mService.setOnCompleteListener(mp -> {
+            if (mShouldPlayNextWhenComplete) {
+                playNext();
+            }
+        });
     }
 
     @Override
@@ -69,6 +78,11 @@ public class MusicManager implements IMusicManager {
             return;
         }
         mService.play(mPlayList.get(position).url);
+    }
+
+    @Override
+    public int getCurrentPlayingIndex() {
+        return mCurrentMusicIndex;
     }
 
     @Override
@@ -177,11 +191,18 @@ public class MusicManager implements IMusicManager {
 
     @Override
     public void start() {
+        Log.d(TAG, "start: ");
         if (mService == null) {
             return;
         }
-        Log.d(TAG, "start: ");
-        mService.resume();
+        if (!mService.isPrepared()) {
+            if (!mPlayList.isEmpty()) {
+                mService.play(mPlayList.get(mCurrentMusicIndex).url);
+                mShouldPlayNextWhenComplete = false;
+            }
+        } else {
+            mService.resume();
+        }
     }
 
     @Override
@@ -189,8 +210,10 @@ public class MusicManager implements IMusicManager {
         if (mService == null) {
             return;
         }
+
         Log.d(TAG, "start: " + url);
         mService.play(url);
+        mShouldPlayNextWhenComplete = false;
     }
 
     @Override
@@ -238,7 +261,7 @@ public class MusicManager implements IMusicManager {
             if (mPlayList.isEmpty()) {
                 Log.v(TAG, "Update Playing State: empty");
                 mHandler.postDelayed(this, 3000);
-            } else if (!mService.isPrepared()) {
+            } else if (mService == null || !mService.isPrepared()) {
                 Log.v(TAG, "Update Playing State: not prepared");
                 mHandler.postDelayed(this, 3000);
             } else {

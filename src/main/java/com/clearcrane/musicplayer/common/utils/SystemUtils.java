@@ -15,6 +15,43 @@ import static android.content.Context.AUDIO_SERVICE;
  */
 
 public class SystemUtils {
+    private static SystemUtils inst;
+    private AudioManager mAudioManager;
+    private int mMaxVolume;
+
+    public static SystemUtils getInstance() {
+        synchronized (SystemUtils.class) {
+            if (inst == null) {
+                inst = new SystemUtils();
+            }
+        }
+        return inst;
+    }
+
+    public void init(Context context) {
+        mAudioManager = (AudioManager) context.getSystemService(AUDIO_SERVICE);
+    }
+
+    public void volumeUp() {
+        if (mAudioManager == null) {
+            return;
+        }
+        int curr = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        if (curr + 1 <= mMaxVolume) {
+            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, curr + 1, 0);
+        }
+    }
+
+    public void volumeDown() {
+        if (mAudioManager == null) {
+            return;
+        }
+        int curr = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        if (curr - 1 >= 0) {
+            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, curr - 1, 0);
+        }
+    }
+
     public static void setVolume(Context context, int volume) {
         AudioManager audio = (AudioManager) context.getSystemService(AUDIO_SERVICE);
         if (audio == null) {

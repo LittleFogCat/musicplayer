@@ -1,10 +1,11 @@
-package com.clearcrane.musicplayer;
+package com.clearcrane.musicplayer.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
 
+import com.clearcrane.musicplayer.R;
 import com.clearcrane.musicplayer.common.utils.SystemUtils;
 
 public class RebootActivity extends Activity {
