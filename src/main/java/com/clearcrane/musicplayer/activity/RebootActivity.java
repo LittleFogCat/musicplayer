@@ -28,7 +28,7 @@ public class RebootActivity extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         mNeedRestart = false;
-        mHandler.removeCallbacks(mCallback);
+        mHandler.removeCallbacksAndMessages(null);
         finish();
         return super.onKeyDown(keyCode, event);
     }

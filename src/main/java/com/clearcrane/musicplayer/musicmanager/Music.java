@@ -39,12 +39,7 @@ public class Music {
     public String toString() {
         return "Music{" +
                 "name='" + name + '\'' +
-                ", url='" + url + '\'' +
                 ", artist='" + artist + '\'' +
-                ", author='" + author + '\'' +
-                ", album='" + album + '\'' +
-                ", publishYear='" + publishYear + '\'' +
-                ", albumCover=" + albumCover +
                 '}';
     }
 }

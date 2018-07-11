@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 apply plugin: 'com.android.application'
 
 android {
@@ -7,6 +9,8 @@ android {
         applicationId "com.clearcrane.musicplayer"
         minSdkVersion 15
         targetSdkVersion 26
+        versionCode 3
+        versionName "v0." + versionCode + "." + new SimpleDateFormat("yyyyMMdd.HHmmss").format(new Date())
     }
 
     buildTypes {
@@ -19,6 +23,12 @@ android {
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            outputFileName = "${applicationId}-${versionName}-${variant.name}.apk"
+        }
     }
 
     lintOptions {

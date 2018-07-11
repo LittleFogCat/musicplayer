@@ -243,6 +243,7 @@ public class MusicPlayerFragment extends Fragment implements UI {
         }
         // 切歌
         if (!music.equals(mCurrentMusic)) {
+            Log.i(TAG, "检测到切歌: " + mCurrentMusic + " -> " + music);
             mCurrentMusic = music;
             String showText = music.name + "(artist: " + music.artist + ")";
             mTvCurrentPlay.setText(showText);
