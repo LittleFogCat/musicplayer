@@ -4,7 +4,7 @@ import android.app.Application;
 import android.content.Intent;
 
 import com.clearcrane.musicplayer.activity.MainActivity;
-import com.clearcrane.musicplayer.common.utils.SPUtils;
+import com.clearcrane.musicplayer.common.utils.SpUtils;
 import com.clearcrane.musicplayer.common.utils.SystemUtils;
 
 import java.io.File;
@@ -28,8 +28,10 @@ public class MusicApp extends Application implements Thread.UncaughtExceptionHan
     public void onCreate() {
         super.onCreate();
         Thread.setDefaultUncaughtExceptionHandler(this);
+
+        // 工具类在很多地方要用到，进入app时就应该初始化，避免出错。其他类在Activity或者Service中初始化。
         SystemUtils.getInstance().init(this);
-        SPUtils.init(this);
+        SpUtils.init(this);
     }
 
     @Override

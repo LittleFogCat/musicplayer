@@ -7,7 +7,9 @@ import android.util.Log;
 import com.clearcrane.musicplayer.common.Constant;
 import com.clearcrane.musicplayer.common.utils.FileUtils;
 import com.clearcrane.musicplayer.common.utils.HttpUtil;
-import com.clearcrane.musicplayer.common.utils.SPUtils;
+import com.clearcrane.musicplayer.common.utils.SpUtils;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,34 +26,25 @@ public class FileCacheManager implements ICacheManager {
     private static ICacheManager sInstance;
 
     private File mDir;
-    private ExecutorService mExecutor = Executors.newFixedThreadPool(5);
-    private boolean mInit;
+    private ExecutorService mExecutor;
 
-    private FileCacheManager() {
-        int nThreads = SPUtils.getInstance().get(Constant.SP_KEY_CACHE_THREADS, Constant.DEFAULT_CACHE_THREADS);
+    private FileCacheManager(Context context) {
+        int nThreads = SpUtils.getInstance().get(Constant.SP_KEY_CACHE_THREADS, Constant.DEFAULT_CACHE_THREADS);
         mExecutor = Executors.newFixedThreadPool(nThreads);
-    }
 
-    public static ICacheManager getInstance() {
-        if (sInstance == null) {
-            sInstance = new FileCacheManager();
-        }
-        return sInstance;
-    }
-
-    @Override
-    public void init(Context context) {
-        Log.d(TAG, "init: " + context);
-        if (mInit) {
-            Log.w(TAG, "init: Already init");
-            return;
-        }
         mDir = new File(context.getFilesDir(), DIR_NAME);
         if (mDir.exists() || !mDir.isDirectory()) {
             mDir.delete();
             mDir.mkdirs();
         }
-        mInit = true;
+        Log.d(TAG, "Constructor: nThreads = " + nThreads + ", mDir = " + mDir);
+    }
+
+    public static ICacheManager getInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new FileCacheManager(context);
+        }
+        return sInstance;
     }
 
     @Override
@@ -110,8 +103,15 @@ public class FileCacheManager implements ICacheManager {
         }
 
         /**
-         * @return 如果文件存在，或者Url有误，返回null，否则创建文件并返回文件
+         * 如果文件已经下载完毕，则返回null。如果文件已经存在，但是文件大小和远端不同，则删除本地文件，重新下载。
+         * 如果url有误，返回null。
+         * <p>
+         * 如果url正确并且文件不存在，那么创建文件，并返回该文件。
+         * todo 断点续传
+         *
+         * @return 如果文件已经下载完毕，或者Url有误，返回null，否则返回文件
          */
+        @Nullable
         private File checkFile() {
             int lastIndexOfX = mUrl.lastIndexOf("/");
             if (lastIndexOfX >= mUrl.length() - 1) {

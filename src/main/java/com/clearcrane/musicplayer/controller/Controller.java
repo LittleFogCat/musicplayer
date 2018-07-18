@@ -11,7 +11,7 @@ import com.clearcrane.musicplayer.common.Constant;
 import com.clearcrane.musicplayer.common.utils.HardwareUtils;
 import com.clearcrane.musicplayer.common.utils.HttpUtil;
 import com.clearcrane.musicplayer.common.utils.JsonUtil;
-import com.clearcrane.musicplayer.common.utils.SPUtils;
+import com.clearcrane.musicplayer.common.utils.SpUtils;
 import com.clearcrane.musicplayer.common.utils.SystemUtils;
 import com.clearcrane.musicplayer.entity.ClientInfoReportRequest;
 import com.clearcrane.musicplayer.entity.GetMusicListJsonFileRequest;
@@ -75,7 +75,7 @@ public class Controller {
      */
     public void startWork(Context context, boolean isLocal) {
         mIsLocal = isLocal;
-        mUri = SPUtils.getInstance().get(Constant.SP_KEY_HOME_URL, Constant.DEFAULT_WS_ADDR);
+        mUri = SpUtils.getInstance().get(Constant.SP_KEY_HOME_URL, Constant.DEFAULT_WS_ADDR);
         Log.d(TAG, "startWork: mUri = " + mUri);
         if (!mSocketConnected && !isLocal) {
             mWebSocket = new WebSocketManager(mUri);
@@ -108,8 +108,7 @@ public class Controller {
             mWebSocket.connect();
         }
 
-        mCacheManager = FileCacheManager.getInstance();
-        mCacheManager.init(context);
+        mCacheManager = FileCacheManager.getInstance(context);
 
         initMusicManager(context, mIsLocal);
     }
@@ -369,8 +368,9 @@ public class Controller {
             mUI.notifyMusicPositionChanged(0, 1, 0, playList.size());
         }
 
-        for (int i = 0; i < 10; i++) {
-            // 缓存10首歌
+        int cacheNum = SpUtils.getInstance().get(Constant.SP_KEY_CACHE_NUM, Constant.DEFAULT_CACHE_NUM);
+        for (int i = 0; i < cacheNum; i++) {
+            // 缓存cacheNum首歌，默认10首
             Music music = playList.get(i);
             mCacheManager.download(music.url);
         }

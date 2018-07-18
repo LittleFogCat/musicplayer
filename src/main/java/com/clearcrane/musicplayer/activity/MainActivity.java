@@ -9,7 +9,6 @@ import android.view.KeyEvent;
 
 import com.clearcrane.musicplayer.R;
 import com.clearcrane.musicplayer.common.DpadRecorder;
-import com.clearcrane.musicplayer.common.utils.SPUtils;
 import com.clearcrane.musicplayer.controller.CoreService;
 import com.clearcrane.musicplayer.musicmanager.IMusicManager;
 import com.clearcrane.musicplayer.musicmanager.Music;

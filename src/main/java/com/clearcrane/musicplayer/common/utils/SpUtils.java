@@ -12,15 +12,15 @@ import android.preference.PreferenceManager;
  */
 
 @SuppressLint("ApplySharedPref")
-public class SPUtils {
-    private static SPUtils sInstance;
+public class SpUtils {
+    private static SpUtils sInstance;
     private SharedPreferences mPreferences;
 
-    private SPUtils(Context context) {
+    private SpUtils(Context context) {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
     }
 
-    public static SPUtils getInstance() {
+    public static SpUtils getInstance() {
         if (sInstance == null) {
             throw new NullPointerException("must call init(context) first");
         }
@@ -29,7 +29,7 @@ public class SPUtils {
 
     public static void init(Context context) {
         if (sInstance == null) {
-            sInstance = new SPUtils(context);
+            sInstance = new SpUtils(context);
         }
     }
 

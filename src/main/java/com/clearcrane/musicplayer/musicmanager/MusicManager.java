@@ -30,7 +30,7 @@ public class MusicManager implements IMusicManager {
     /**
      * 是否连续播放，当播放欢迎乐的时候，不需要连续播放，只用放一首
      */
-    private boolean mShouldPlayNextWhenComplete = true;
+    private boolean mIsPlayingWelcome = false;
 
     private MusicManager() {
         mHandler.postDelayed(mProgressTask, 1000);
@@ -51,7 +51,7 @@ public class MusicManager implements IMusicManager {
         }
         mService = service;
         mService.setOnCompleteListener(mp -> {
-            if (mShouldPlayNextWhenComplete) {
+            if (!mIsPlayingWelcome) {
                 playNext();
             }
         });
@@ -198,10 +198,17 @@ public class MusicManager implements IMusicManager {
         if (!mService.isPrepared()) {
             if (!mPlayList.isEmpty()) {
                 mService.play(mPlayList.get(mCurrentMusicIndex).url);
-                mShouldPlayNextWhenComplete = false;
+                mIsPlayingWelcome = false;
             }
         } else {
-            mService.resume();
+            if (mIsPlayingWelcome) {
+                if (!mPlayList.isEmpty()) {
+                    mService.play(mPlayList.get(mCurrentMusicIndex).url);
+                    mIsPlayingWelcome = false;
+                }
+            } else {
+                mService.resume();
+            }
         }
     }
 
@@ -213,7 +220,7 @@ public class MusicManager implements IMusicManager {
 
         Log.d(TAG, "start: " + url);
         mService.play(url);
-        mShouldPlayNextWhenComplete = false;
+        mIsPlayingWelcome = true;
     }
 
     @Override
